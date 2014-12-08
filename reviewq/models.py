@@ -141,6 +141,10 @@ class ReviewHistory(Base):
     prev = Column(Text)
     new = Column(Text)
 
+    api_url = Column(Text)
+
+    changed = Column(UTCDateTime, default=datetime.datetime.utcnow)
+
     user = relationship('User', backref=backref('actions'))
     review = relationship('Review', backref=backref('history'))
 

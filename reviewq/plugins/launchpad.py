@@ -7,6 +7,7 @@ from ..models import (
     User,
     Review,
     ReviewVote,
+    ReviewHistory,
 )
 
 from ..helpers import (
@@ -179,6 +180,7 @@ class LaunchPad(SourcePlugin):
             DBSession.add(r)
 
         self.parse_messages(bug.messages, r)
+        self.parse_activity(bug.activity, r)
 
     def parse_comments(self, comments, review):
         for m in comments:
@@ -223,6 +225,28 @@ class LaunchPad(SourcePlugin):
 
             with transaction.manager:
                 create_vote(vote)
+
+    def parse_activity(self, activity, review):
+        i = 0
+        for a in activity:
+            uid = "%s/%s" % (a.self_link, i)
+            i += 1
+            r = DBSession.query(ReviewHistory).filter_by(api_url=uid).first()
+            if r:
+                continue
+
+            if not a.message:
+                msg = a.whatchanged
+            else:
+                msg = a.message
+
+            with transaction.manager:
+                u = create_user(a.person)
+                r = ReviewHistory(api_url=uid, what=msg, new=a.newvalue,
+                                  prev=a.oldvalue, user=u, review=review,
+                                  changed=a.datechanged.replace(tzinfo=None))
+                print('Inserting %s' % uid)
+                DBSession.add(r)
 
     def refresh(self, record=None, id=None):
         if not record and not id:
