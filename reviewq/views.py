@@ -51,6 +51,7 @@ def dashboard(request):
                                              Review.state != 'MERGED',
                                              Review.state != 'ABANDONDED').order_by(Review.updated).all()
     incoming = DBSession.query(Review).filter_by(state='NEW').order_by(Review.updated).all()
+
     return dict(reviews=reviews, incoming=incoming)
 
 
@@ -265,6 +266,7 @@ def user(request):
                                                        .join(ReviewVote)
                                                        .filter_by(owner=user)),
                                 Review.owner != user)
+
                         .order_by(Review.updated)
               ).all()
     locked = (DBSession.query(Review)
