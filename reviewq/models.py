@@ -148,6 +148,7 @@ class ReviewHistory(Base):
 class ReviewTest(Base):
     __tablename__ = 'review_test'
     id = Column(Integer, primary_key=True)
+    parent_id = Column(Integer, ForeignKey('review_test.id'))
     review_id = Column(Integer, ForeignKey('review.id'))
     requester_id = Column(Integer, ForeignKey('user.id'))
     status = Column(Text)  # PENDING, PASS, FAIL?
@@ -158,6 +159,7 @@ class ReviewTest(Base):
 
     review = relationship('Review', backref=backref('tests'),
                           order_by="ReviewTest.id")
+    parent = relationship('ReviewTest', backref=backref('results'))
     requester = relationship('User')
 
 
