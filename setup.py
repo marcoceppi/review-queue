@@ -25,6 +25,7 @@ requires = [
     'requests',
     'celery[redis]',
     'psycopg2',
+    'Py-StackExchange',
     ]
 
 setup(name='reviewq',

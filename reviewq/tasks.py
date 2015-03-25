@@ -5,6 +5,8 @@ from celerycfg import celery
 from celery.signals import worker_init
 
 from .plugins.launchpad import LaunchPad
+from .plugins.askubuntu import AskUbuntu
+
 from launchpadlib import errors
 
 from .helpers import (
@@ -21,6 +23,11 @@ from .models import (
 @celery.task
 def import_from_lp():
     LaunchPad().ingest('charmers')
+
+
+@celery.task
+def import_from_askubuntu():
+    AskUbuntu().ingest()
 
 
 @worker_init.connect
