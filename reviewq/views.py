@@ -212,7 +212,14 @@ def test_review(request):
 
     rt = ReviewTest(status='PENDING', review=review, finished=None,
                     requester=user)
+
     DBSession.add(rt)
+    environments = request.registry.settings['cbt.token'].split(',')
+
+    for env in environments:
+        DBSession.add(ReviewTest(status='pending', review=review,
+                                 finished=None, parent=rt, environment=env))
+
     DBSession.flush()
 
     if review.type == 'UPDATE':

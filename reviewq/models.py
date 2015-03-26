@@ -153,14 +153,21 @@ class ReviewTest(Base):
     requester_id = Column(Integer, ForeignKey('user.id'))
     status = Column(Text)  # PENDING, PASS, FAIL?
     url = Column(Text)
+    environment = Column(Text, default=None)
 
     created = Column(UTCDateTime, default=datetime.datetime.utcnow)
     finished = Column(UTCDateTime, default=datetime.datetime.utcnow)
 
     review = relationship('Review', backref=backref('tests'),
                           order_by="ReviewTest.id")
-    parent = relationship('ReviewTest', backref=backref('results'))
+    parent = relationship('ReviewTest', backref=backref('results'),
+                          remote_side=[id])
     requester = relationship('User')
+
+    @pyramid.decorator.reify
+    def results(self):
+        if self.parent_id:
+            return None
 
 
 class ReviewVote(Base):

@@ -201,7 +201,7 @@ def request_build(build, cbt=None, token=None):
         'token': token,
         'callback_url': cb,
         'code_review': 'true',
-        'cause': 'Requested by review-queue ingestion.'
+        'cause': 'Requested by review-queue.'
     })
     response.raise_for_status()
 
